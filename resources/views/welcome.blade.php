@@ -21,11 +21,11 @@
                                 <div class="flex items-center space-x-6 lg:space-x-8">
                                     <div class="flex-shrink-0 grid grid-cols-1 gap-y-6 lg:gap-y-8">
                                         <div class="w-44 h-64 rounded-lg overflow-hidden sm:opacity-0 lg:opacity-100">
-                                            <img src="https://images.unsplash.com/photo-1596462502278-27bfdd403cc2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                            <img src="https://images.squarespace-cdn.com/content/v1/63052619b0f81122751533e9/14e284c7-9b7f-40ca-b184-4677877c2786/brand-photography-5th-ave-57.jpg"
                                                 alt="" class="w-full h-full object-center object-cover">
                                         </div>
                                         <div class="w-44 h-64 rounded-lg overflow-hidden">
-                                            <img src="https://images.unsplash.com/photo-1571781535014-53bd96515f45?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                            <img src="https://img.freepik.com/free-photo/blonde-female-getting-new-hairstyle-hair-salon_181624-60087.jpg?w=360"
                                                 alt="" class="w-full h-full object-center object-cover">
                                         </div>
                                     </div>
@@ -35,17 +35,17 @@
                                                 alt="" class="w-full h-full object-center object-cover">
                                         </div>
                                         <div class="w-44 h-64 rounded-lg overflow-hidden">
-                                            <img src="https://images.unsplash.com/photo-1556228720-1910d9cc57f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                            <img src="https://images.pexels.com/photos/973403/pexels-photo-973403.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
                                                 alt="" class="w-full h-full object-center object-cover">
                                         </div>
                                         <div class="w-44 h-64 rounded-lg overflow-hidden">
-                                            <img src="https://images.unsplash.com/photo-1522335789203-abd6523f4349?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                            <img src="https://images.pexels.com/photos/691166/pexels-photo-691166.jpeg?cs=srgb&dl=pexels-delphine-hourlay-91322-691166.jpg&fm=jpg"
                                                 alt="" class="w-full h-full object-center object-cover">
                                         </div>
                                     </div>
                                     <div class="flex-shrink-0 grid grid-cols-1 gap-y-6 lg:gap-y-8">
                                         <div class="w-44 h-64 rounded-lg overflow-hidden">
-                                            <img src="https://images.unsplash.com/photo-1608248597279-f99d160bfbc8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                            <img src="https://i0.wp.com/zaloraadmin.wpcomstaging.com/wp-content/uploads/2024/08/model-sanggul-modern-untuk-wisuda.png?fit=1200%2C620&ssl=1"
                                                 alt="" class="w-full h-full object-center object-cover">
                                         </div>
                                         <div class="w-44 h-64 rounded-lg overflow-hidden">
