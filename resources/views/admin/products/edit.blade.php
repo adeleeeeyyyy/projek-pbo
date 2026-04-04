@@ -66,11 +66,12 @@
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="price" class="block text-sm font-medium text-slate-700">Price (IDR)</label>
+                                <label for="price_mask" class="block text-sm font-medium text-slate-700">Price (IDR)</label>
                                 <div class="relative mt-1 rounded-md shadow-sm">
-                                    <input type="number" name="price" id="price"
-                                        value="{{ old('price', $product->price) }}" required
+                                    <input type="text" id="price_mask"
+                                        value="{{ number_format(old('price', $product->price), 0, ',', '.') }}" required
                                         class="block w-full rounded-md border-slate-300 pl-3 focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    <input type="hidden" name="price" id="price" value="{{ old('price', $product->price) }}">
                                 </div>
                             </div>
 
