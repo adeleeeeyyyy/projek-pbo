@@ -143,7 +143,22 @@ Sistem telah dilengkapi dengan fitur pemformatan harga otomatis (ribuan dipisahk
 2. **JavaScript Logic**: Menggunakan `Intl.NumberFormat('id-ID')` untuk mengubah angka murni menjadi format Rupiah secara *real-time* saat Admin mengetik.
 3. **Sinkronisasi**: Setiap kali Admin mengetik di `price_mask`, skrip akan membersihkan karakter non-angka dan memperbarui nilai pada input hidden `price`.
 
-## 8. Potensi Pengembangan (Future Updates)
+## 8. Panduan Operasional Dasar (Laravel CLI)
+Untuk keperluan pengembangan dan ujian, berikut adalah perintah dasar yang sering digunakan:
+
+- **Menjalankan Server**: `php artisan serve` (Akses di http://127.0.0.1:8000).
+- **Membuat Resource Baru**:
+  - Model & Migrasi: `php artisan make:model NamaModel -m`
+  - Controller: `php artisan make:controller NamaController`
+  - Seeder: `php artisan make:seeder NamaSeeder`
+- **Manajemen Database**:
+  - Jalankan Migrasi: `php artisan migrate`
+  - Jalankan Seeder: `php artisan db:seed`
+  - Refresh Database (Hapus semua data & ulang): `php artisan migrate:fresh --seed`
+- **Frontend (Assets)**:
+  - Kompilasi CSS/JS (Vite): `npm run dev`
+
+## 9. Potensi Pengembangan (Future Updates)
 - Integrasi dengan gerbang pembayaran modern (misal: Midtrans).
 - Sistem ulasan dan rating produk oleh pelanggan.
 - Fitur manajemen kupon diskon dan kampanye promosi.
