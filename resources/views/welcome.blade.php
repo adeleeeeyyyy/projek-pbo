@@ -62,12 +62,72 @@
         </div>
     </div>
 
-    <!-- Product Grid -->
-    <div class="bg-gray-50">
-        <div class="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-bold tracking-tight text-slate-900 mb-8">Latest Collection</h2>
+    <!-- Search and Filter Section -->
+    <div class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <form action="{{ route('home') }}" method="GET" class="space-y-4 md:space-y-0 md:flex md:items-center md:space-x-4">
+                <div class="flex-grow relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search products..."
+                        class="block w-full pl-12 pr-3 py-2 border border-slate-300 rounded-md leading-5 bg-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-300">
+                </div>
+                <div class="flex-shrink-0">
+                    <select name="category" onchange="this.form.submit()"
+                        class="block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md transition-all duration-300">
+                        <option value="">All Categories</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
+                                {{ $category }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex space-x-2">
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        Search
+                    </button>
+                    @if(request()->has('search') || request()->has('category'))
+                        <a href="{{ route('home') }}"
+                            class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                            Reset
+                        </a>
+                    @endif
+                </div>
+            </form>
+        </div>
+    </div>
 
-            <div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+    <!-- Product Grid -->
+    <div class="bg-gray-50 min-h-screen">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-2xl font-bold tracking-tight text-slate-900">
+                    @if(request('search'))
+                        Search results for "{{ request('search') }}"
+                    @elseif(request('category'))
+                        {{ request('category') }} Collection
+                    @else
+                        Latest Collection
+                    @endif
+                </h2>
+                <span class="text-sm text-slate-500">{{ $products->count() }} Products Found</span>
+            </div>
+
+            @if($products->isEmpty())
+                <div class="text-center py-20">
+                    <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-slate-900">No products found</h3>
+                    <p class="mt-1 text-sm text-slate-500">Try adjusting your search or filter to find what you're looking for.</p>
+                </div>
+            @else
+                <div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                 @foreach ($products as $product)
                     <div class="group relative">
                         <div
@@ -100,6 +160,7 @@
                     </div>
                 @endforeach
             </div>
+            @endif
         </div>
     </div>
 </x-guest-layout>

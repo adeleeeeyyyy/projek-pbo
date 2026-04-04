@@ -29,6 +29,48 @@
         </div>
     @endif
 
+    <!-- Search and Filter -->
+    <div class="mt-6 bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+        <form action="{{ route('admin.products.index') }}" method="GET" class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
+            <div class="flex-grow">
+                <label for="search" class="sr-only">Search</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <input type="text" name="search" id="search" value="{{ request('search') }}"
+                        class="block w-full pl-12 pr-3 py-2 border border-slate-300 rounded-md leading-5 bg-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="Search products by name...">
+                </div>
+            </div>
+            <div class="w-full md:w-48">
+                <select name="category" onchange="this.form.submit()"
+                    class="block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    <option value="">All Categories</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
+                            {{ $category }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex space-x-2">
+                <button type="submit"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Filter
+                </button>
+                @if(request()->has('search') || request()->has('category'))
+                    <a href="{{ route('admin.products.index') }}"
+                        class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Clear
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
+
     <div class="mt-8 flex flex-col">
         <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">

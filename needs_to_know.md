@@ -105,3 +105,45 @@ Berikut adalah daftar fitur utama yang telah diimplementasikan sebagai standar m
 - [x] **Manajemen Produk (CRUD)**: Menambah, melihat, mengedit, dan menghapus produk.
 - [x] **Unggah Gambar Produk**: Mendukung file lokal atau URL eksternal.
 - [x] **Manajemen Pesanan**: Melihat daftar pesanan masuk dan memperbarui statusnya.
+
+## 6. Langkah-Langkah Teknis Pembuatan Aplikasi
+Berikut adalah ringkasan tahapan pengembangan sistem e-commerce ini:
+
+### Tahap 1: Perencanaan & Inisialisasi
+- **Analisis Kebutuhan**: Menentukan fitur utama (katalog, keranjang, checkout) dan peran pengguna (Admin & Pelanggan).
+- **Setup Framework**: Instalasi Laravel, konfigurasi database, dan setup Tailwind CSS untuk UI yang modern.
+- **Sistem Otentikasi**: Membangun sistem login dan registrasi menggunakan `AuthController` untuk manajemen role (Admin & Customer).
+
+### Tahap 2: Pengembangan Sisi Katalog
+- **CRUD Produk**: Membangun fitur manajemen produk oleh Admin (Upload gambar, kategori, harga).
+- **Halaman Utama**: Menampilkan produk secara dinamis dengan fitur pencarian dan filter kategori menggunakan Query Builder Laravel.
+
+### Tahap 3: Implementasi Keranjang Belanja (Shopping Cart)
+- **Model & Database**: Membuat tabel `carts` untuk menyimpan item yang dipilih user sebelum dicheckout.
+- **Logika Cart**: 
+    - `CartController@store`: Menambah produk ke keranjang. Jika produk sudah ada, jumlahnya ditambahkan (increment).
+    - `CartController@index`: Menampilkan daftar belanjaan dengan total harga yang dihitung secara *real-time*.
+    - `CartController@destroy`: Menghapus item dari keranjang.
+
+### Tahap 4: Sistem Pembayaran & Checkout
+- **Review Pesanan**: Halaman checkout menampilkan ringkasan belanjaan dan formulir pengisian alamat pengiriman.
+- **Order Processing**:
+    - Saat tombol "Place Order" ditekan, `OrderController@store` menjalankan **Database Transaction**.
+    - Data dari tabel `carts` dipindahkan (migrasi) ke tabel `order_items` lengkap dengan harga snapshot (untuk mencegah perubahan harga di masa depan mempengaruhi data lama).
+    - Tabel `orders` dibuat untuk mencatat status transaksi (`pending`).
+    - **Pembersihan**: Setelah data tersimpan dengan aman, isi keranjang user (`carts`) dihapus secara otomatis.
+
+## 7. Walkthrough: Fitur Auto-Format Harga
+Sistem telah dilengkapi dengan fitur pemformatan harga otomatis (ribuan dipisahkan titik) pada Dashboard Admin untuk memudahkan input data.
+
+### Cara Kerja:
+1. **Dual Input**: Input harga dipecah menjadi dua:
+   - `price_mask`: Input teks yang terlihat oleh Admin (berformat titik).
+   - `price` (Hidden): Input tersembunyi yang menyimpan angka murni untuk dikirim ke database.
+2. **JavaScript Logic**: Menggunakan `Intl.NumberFormat('id-ID')` untuk mengubah angka murni menjadi format Rupiah secara *real-time* saat Admin mengetik.
+3. **Sinkronisasi**: Setiap kali Admin mengetik di `price_mask`, skrip akan membersihkan karakter non-angka dan memperbarui nilai pada input hidden `price`.
+
+## 8. Potensi Pengembangan (Future Updates)
+- Integrasi dengan gerbang pembayaran modern (misal: Midtrans).
+- Sistem ulasan dan rating produk oleh pelanggan.
+- Fitur manajemen kupon diskon dan kampanye promosi.

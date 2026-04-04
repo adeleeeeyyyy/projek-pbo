@@ -62,11 +62,24 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('totalProducts', 'totalStock', 'totalSales'));
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $this->ensureAdmin();
-        $products = \App\Models\Product::all();
-        return view('admin.products.index', compact('products'));
+        
+        $query = \App\Models\Product::query();
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        $products = $query->latest()->get();
+        $categories = \App\Models\Product::select('category')->distinct()->pluck('category');
+
+        return view('admin.products.index', compact('products', 'categories'));
     }
 
     public function create()
