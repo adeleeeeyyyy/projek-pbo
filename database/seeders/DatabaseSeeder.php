@@ -15,19 +15,27 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Admin User
-        User::create([
-            'name' => 'Administrator',
-            'email' => 'admin@beauty.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@beauty.com'],
+            [
+                'name' => 'Administrator',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
 
         // Customer User
-        User::create([
-            'name' => 'Regular User',
-            'email' => 'user@beauty.com',
-            'password' => Hash::make('password'),
-            'role' => 'customer',
+        User::firstOrCreate(
+            ['email' => 'user@beauty.com'],
+            [
+                'name' => 'Regular User',
+                'password' => Hash::make('password'),
+                'role' => 'customer',
+            ]
+        );
+
+        $this->call([
+            ProductSeeder::class,
         ]);
     }
 }
