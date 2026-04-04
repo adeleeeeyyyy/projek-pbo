@@ -20,38 +20,88 @@ Proyek ini adalah sebuah **Platform E-Commerce Kecantikan Berbasis Web**. Sistem
 
 ### A. Arsitektur Sistem (MVC)
 Aplikasi ini mengikuti pola arsitektur **Model-View-Controller (MVC)**:
-- **Model**: Mengelola data dan logika bisnis (contoh: [Product.php](file:///home/himro/Projects/projek-pbo/app/Models/Product.php), [Order.php](file:///home/himro/Projects/projek-pbo/app/Models/Order.php)). Menggunakan **Eloquent ORM** untuk interaksi database yang aman dan efisien.
+- **Model**: Mengelola data dan logika bisnis (contoh: `Product.php`, `Order.php`). Menggunakan **Eloquent ORM** untuk interaksi database yang aman dan efisien.
 - **View**: Antarmuka pengguna yang dinamis menggunakan **Blade Template Engine** dan dipadu dengan **Tailwind CSS** untuk *styling*.
-- **Controller**: Menangani permintaan dari pengguna, memproses data melalui Model, dan mengirimkannya kembali ke View (contoh: [AdminController.php](file:///home/himro/Projects/projek-pbo/app/Http/Controllers/AdminController.php), [OrderController.php](file:///home/himro/Projects/projek-pbo/app/Http/Controllers/OrderController.php)).
+- **Controller**: Menangani permintaan dari pengguna, memproses data melalui Model, dan mengirimkannya kembali ke View (contoh: `AdminController.php`, `OrderController.php`).
 
-### B. Struktur & Relasi Database
-Sistem menggunakan database relasional dengan skema berikut:
-- **Users**: Menyimpan data akun pelanggan dan admin (dibedakan melalui kolom `role`).
-- **Products**: Informasi produk seperti nama, deskripsi, harga, stok, kategorti, dan URL gambar.
-- **Carts**: Tabel perantara antara User dan Product untuk menyimpan item yang belum dicheckout.
-- **Orders & OrderItems**: 
-    - `Orders` menyimpan informasi utama pesanan (total harga, alamat, status).
-    - `OrderItems` menyimpan rincian produk yang dibeli dalam satu pesanan (snapshot harga saat dibeli, kuantitas).
+### B. Struktur Data & Skema Database
+Sistem menggunakan database relasional (MySQL/MariaDB) dengan struktur tabel sebagai berikut:
 
-**Relasi Utama**:
-- [User](file:///home/himro/Projects/projek-pbo/app/Models/User.php#10-49) **Has Many** `Orders` (Satu user bisa punya banyak pesanan).
-- [Order](file:///home/himro/Projects/projek-pbo/app/Models/Order.php#8-24) **Has Many** `OrderItems` (Satu pesanan bisa terdiri dari banyak produk).
-- [Product](file:///home/himro/Projects/projek-pbo/app/Models/Product.php#7-20) **Has Many** `OrderItems` (Satu produk bisa muncul di banyak pesanan).
+#### 1. Tabel `users`
+Menyimpan data otentikasi dan identitas pengguna.
+- `id`: BigInt (Primary Key)
+- `name`: String (Nama lengkap)
+- `email`: String (Unique, untuk login)
+- `password`: String (Hashed)
+- `role`: Enum/String ('admin', 'customer')
+- `timestamps`: `created_at` & `updated_at`
 
-### C. Alur Kerja Sistem (System Workflow)
-1.  **Sisi Pelanggan**:
-    - Pelanggan melakukan registrasi dan login.
-    - Menjelajahi katalog produk di halaman utama.
-    - Menambahkan produk ke dalam keranjang belanja ([Cart](file:///home/himro/Projects/projek-pbo/app/Models/Cart.php#8-24)).
-    - Melakukan `Checkout` dengan mengisi alamat pengiriman. Sistem akan memindahkan data dari [Cart](file:///home/himro/Projects/projek-pbo/app/Models/Cart.php#8-24) ke `Orders` dalam satu **Database Transaction** untuk menjaga integritas data.
-2.  **Sisi Administrator**:
-    - Admin login melalui jalur khusus (`/admin/login`).
-    - Mengakses Dashboard untuk melihat ringkasan statistik (total stok, produk, dll).
-    - Melakukan operasi **CRUD** (Create, Read, Update, Delete) pada tabel produk.
-    - Mengelola status pesanan pelanggan (dari `pending` ke status selanjutnya).
+#### 2. Tabel `products`
+Menyimpan katalog produk kecantikan.
+- `id`: BigInt (Primary Key)
+- `name`: String (Nama produk)
+- `description`: Text (Deskripsi detail)
+- `price`: Decimal (10,2) (Harga produk)
+- `stock`: Integer (Jumlah stok tersedia)
+- `category`: String (Kategori: Skincare, Makeup, dll)
+- `image_url`: String (Link gambar produk)
 
-### D. Keamanan & Validasi
-- **Middleware [auth](file:///home/himro/Projects/projek-pbo/app/Http/Controllers/AdminController.php#18-38)**: Melindungi rute sensitif agar hanya bisa diakses oleh pengguna yang sudah login.
-- **Role-Based Access**: Memastikan halaman admin hanya bisa diakses oleh user dengan role 'admin'.
-- **Validasi Request**: Setiap input dari pengguna divalidasi dengan ketat menggunakan Laravel `validate` untuk mencegah SQL Injection dan data cacat.
-- **Database Transaction**: Digunakan pada proses checkout untuk memastikan jika terjadi kegagalan sistem, data pesanan tidak akan tercipta secara setengah-setengah (menjamin atomisitas).
+#### 3. Tabel `carts`
+Menyimpan keranjang belanja sementara.
+- `id`: BigInt (Primary Key)
+- `user_id`: Foreign Key (ke tabel `users`)
+- `product_id`: Foreign Key (ke tabel `products`)
+- `quantity`: Integer (Jumlah barang)
+
+#### 4. Tabel `orders`
+Menyimpan informasi utama transaksi.
+- `id`: BigInt (Primary Key)
+- `user_id`: Foreign Key (ke tabel `users`)
+- `total_price`: Decimal (15,2) (Total bayar)
+- `status`: String (Status: pending, processing, completed, cancelled)
+- `shipping_address`: Text (Alamat pengiriman)
+
+#### 5. Tabel `order_items`
+Rincian produk dalam setiap pesanan (Order Detail).
+- `id`: BigInt (Primary Key)
+- `order_id`: Foreign Key (ke tabel `orders`)
+- `product_id`: Foreign Key (ke tabel `products`)
+- `quantity`: Integer
+- `price`: Decimal (10,2) (Harga saat pembelian/snapshot)
+
+### C. Alur Kerja & Logika Sistem
+1.  **Middleware & Keamanan**:
+    -   `auth`: Memastikan user sudah login sebelum mengakses `/cart`, `/checkout`, dan `/orders`.
+    -   **Role-Based Check**: Di dalam `AdminController`, terdapat fungsi `ensureAdmin()` yang memverifikasi apakah `Auth::user()->role === 'admin'`. Jika tidak, sistem akan mengembalikan error 403 (Unauthorized).
+2.  **Validasi Data**:
+    -   Menggunakan Laravel Request Validation. Contoh: Produk harus memiliki nama, harga numerik, dan stok integer. Gambar divalidasi ukuran (max 2MB) dan tipe filenya.
+3.  **Eloquent Relationships**:
+    -   `Order -> items()`: Relasi **One-to-Many** ke `OrderItem`.
+    -   `OrderItem -> product()`: Relasi **BelongsTo** ke `Product` untuk mengambil detail item.
+    -   `Cart -> product()`: Relasi **BelongsTo** untuk menampilkan data produk di halaman keranjang.
+4.  **Database Transactions**:
+    -   Proses checkout dibungkus dalam `DB::transaction()` untuk memastikan jika terjadi error saat menyimpan salah satu item, seluruh proses akan di-rollback (data tetap konsisten).
+
+### D. Spesifikasi Lingkungan
+- **Framework**: Laravel 12.x
+- **Bahasa**: PHP 8.2+
+- **Frontend**: Blade Template & Tailwind CSS
+- **Package Manager**: Composer & NPM
+
+## 5. Checklist Fitur MVP (Minimum Viable Product)
+Berikut adalah daftar fitur utama yang telah diimplementasikan sebagai standar minimum aplikasi e-commerce:
+
+### Fitur Pelanggan (Customer)
+- [x] **Registrasi & Login**: Akun unik untuk setiap pengguna.
+- [x] **Katalog Produk**: Menampilkan daftar produk dengan pagination/grid yang rapi.
+- [x] **Detail Produk**: Menampilkan deskripsi lengkap, harga, dan gambar produk.
+- [x] **Keranjang Belanja (Cart)**: Menambah, menghapus, dan memperbarui jumlah item.
+- [x] **Checkout System**: Validasi alamat pengiriman dan ringkasan total biaya.
+- [x] **Riwayat Pesanan**: Melihat status dan detail pesanan yang telah dilakukan.
+
+### Fitur Administrator
+- [x] **Login Khusus Admin**: Keamanan tambahan dengan pengecekan role.
+- [x] **Dashboard Statis**: Ringkasan jumlah produk, stok, dan estimasi penjualan.
+- [x] **Manajemen Produk (CRUD)**: Menambah, melihat, mengedit, dan menghapus produk.
+- [x] **Unggah Gambar Produk**: Mendukung file lokal atau URL eksternal.
+- [x] **Manajemen Pesanan**: Melihat daftar pesanan masuk dan memperbarui statusnya.
