@@ -158,7 +158,17 @@ Untuk keperluan pengembangan dan ujian, berikut adalah perintah dasar yang serin
 - **Frontend (Assets)**:
   - Kompilasi CSS/JS (Vite): `npm run dev`
 
-## 9. Potensi Pengembangan (Future Updates)
+## 9. Metodologi Pengembangan (SDLC - Waterfall)
+Proyek ini dikembangkan menggunakan metode **Waterfall** yang sistematis dan berurutan:
+
+1. **Requirement Analysis**: Tahap awal mengidentifikasi kebutuhan fitur (Katalog, Keranjang, Transaksi) dan target pengguna aplikasi.
+2. **System Design**: Perancangan skema database, alur kerja (flowchart), dan desain antarmuka (mockup) menggunakan Tailwind CSS.
+3. **Implementation**: Tahap penulisan kode (coding) menggunakan framework Laravel sesuai dengan rancangan yang telah dibuat.
+4. **Testing**: Melakukan uji coba fitur untuk memastikan sistem berjalan lancar dan bebas dari bug sebelum dipresentasikan.
+5. **Deployment**: Tahap instalasi dan konfigurasi sistem pada lingkungan server (Localhost) agar siap digunakan.
+6. **Maintenance**: Rencana pemeliharaan jangka panjang untuk menangani error atau penambahan fitur di masa depan.
+
+## 10. Potensi Pengembangan (Future Updates)
 - Integrasi dengan gerbang pembayaran modern (misal: Midtrans).
 - Sistem ulasan dan rating produk oleh pelanggan.
 - Fitur manajemen kupon diskon dan kampanye promosi.
