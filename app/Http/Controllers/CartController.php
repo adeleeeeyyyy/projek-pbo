@@ -44,6 +44,19 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Product added to cart!');
     }
 
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        $cartItem = Cart::where('user_id', Auth::id())->findOrFail($id);
+        $cartItem->quantity = $request->quantity;
+        $cartItem->save();
+
+        return redirect()->back()->with('success', 'Cart updated!');
+    }
+
     public function destroy($id)
     {
         $cartItem = Cart::where('user_id', Auth::id())->findOrFail($id);

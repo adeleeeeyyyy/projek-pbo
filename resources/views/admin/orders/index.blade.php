@@ -24,6 +24,8 @@
                                     <th scope="col"
                                         class="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">Date</th>
                                     <th scope="col"
+                                        class="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">Payment</th>
+                                    <th scope="col"
                                         class="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">Status</th>
                                     <th scope="col"
                                         class="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">Action</th>
@@ -45,6 +47,9 @@
                                         </td>
                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-slate-500">
                                             {{ $order->created_at->format('M d, Y') }}
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-slate-500">
+                                            {{ strtoupper($order->payment_method) }}
                                         </td>
                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-slate-500">
                                             <span

@@ -56,10 +56,10 @@ class AdminController extends Controller
         $this->ensureAdmin();
 
         $totalProducts = \App\Models\Product::count();
-        $totalStock = \App\Models\Product::sum('stock');
-        $totalSales = 12500000;
+        $totalRevenue = \App\Models\Order::where('status', 'completed')->sum('total_price');
+        $totalUsers = \App\Models\User::count();
 
-        return view('admin.dashboard', compact('totalProducts', 'totalStock', 'totalSales'));
+        return view('admin.dashboard', compact('totalProducts', 'totalRevenue', 'totalUsers'));
     }
 
     public function index(Request $request)

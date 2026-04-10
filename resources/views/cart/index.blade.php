@@ -11,82 +11,132 @@
                     </a>
                 </div>
             @else
-                <form class="mt-12 lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start xl:gap-x-16">
+                <div class="mt-12 lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start xl:gap-x-16">
                     <section aria-labelledby="cart-heading" class="lg:col-span-7">
-                        <ul role="list" class="border-t border-b border-gray-200 divide-y divide-gray-200">
-                            @foreach ($cartItems as $item)
-                                <li class="flex py-6 sm:py-10">
-                                    <div class="flex-shrink-0">
-                                        <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}"
-                                            class="w-24 h-24 rounded-md object-center object-cover sm:w-48 sm:h-48">
-                                    </div>
+                        <div class="flex items-center justify-between pb-4 border-b border-gray-200">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="select-all" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer" onchange="toggleSelectAll(this)">
+                                <label for="select-all" class="ml-2 text-sm text-slate-600 cursor-pointer">Select All</label>
+                            </div>
+                        </div>
 
-                                    <div class="ml-4 flex-1 flex flex-col justify-between sm:ml-6">
-                                        <div class="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
-                                            <div>
-                                                <div class="flex justify-between">
-                                                    <h3 class="text-sm">
-                                                        <a href="#"
-                                                            class="font-medium text-slate-700 hover:text-slate-800">
-                                                            {{ $item->product->name }}
-                                                        </a>
-                                                    </h3>
+                        {{-- Hidden forms for updates and deletion to avoid nesting --}}
+                        @foreach ($cartItems as $item)
+                            <form id="update-minus-{{ $item->id }}" action="{{ route('cart.update', $item->id) }}" method="POST" class="hidden">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="quantity" value="{{ $item->quantity - 1 }}">
+                            </form>
+                            <form id="update-plus-{{ $item->id }}" action="{{ route('cart.update', $item->id) }}" method="POST" class="hidden">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="quantity" value="{{ $item->quantity + 1 }}">
+                            </form>
+                            <form id="delete-form-{{ $item->id }}" action="{{ route('cart.destroy', $item->id) }}" method="POST" class="hidden">
+                                @csrf
+                                @method('DELETE')
+                            </form>
+                        @endforeach
+
+                        <form id="checkout-form" action="{{ route('checkout.index') }}" method="GET">
+                            <ul role="list" class="divide-y divide-gray-200">
+                                @foreach ($cartItems as $item)
+                                    <li class="flex py-6 sm:py-10 items-center">
+                                        <div class="mr-4">
+                                            <input type="checkbox" name="selected_items[]" value="{{ $item->id }}" 
+                                                class="item-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer" 
+                                                checked onchange="updateTotal()">
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}"
+                                                class="w-24 h-24 rounded-md object-center object-cover sm:w-32 sm:h-32">
+                                        </div>
+
+                                        <div class="ml-4 flex-1 flex flex-col justify-between sm:ml-6">
+                                            <div class="relative pr-9">
+                                                <div>
+                                                    <div class="flex justify-between">
+                                                        <h3 class="text-sm">
+                                                            <a href="#" class="font-medium text-slate-700 hover:text-slate-800">
+                                                                {{ $item->product->name }}
+                                                            </a>
+                                                        </h3>
+                                                    </div>
+                                                    <p class="mt-1 text-sm text-slate-500">{{ $item->product->category }}</p>
+                                                    <p class="mt-1 text-sm font-medium text-slate-900" data-price="{{ $item->product->price }}">IDR
+                                                        {{ number_format($item->product->price, 0, ',', '.') }}</p>
                                                 </div>
-                                                <div class="mt-1 flex text-sm">
-                                                    <p class="text-slate-500">{{ $item->product->category }}</p>
-                                                </div>
-                                                <p class="mt-1 text-sm font-medium text-slate-900">IDR
-                                                    {{ number_format($item->product->price, 0, ',', '.') }}</p>
-                                            </div>
 
-                                            <div class="mt-4 sm:mt-0 sm:pr-9">
-                                                <label for="quantity-{{ $item->id }}" class="sr-only">Quantity,
-                                                    {{ $item->product->name }}</label>
-                                                <p class="text-slate-500">Qty: {{ $item->quantity }}</p>
-
-                                                <div class="absolute top-0 right-0">
-                                                    <form action="{{ route('cart.destroy', $item->id) }}" method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="-m-2 p-2 inline-flex text-gray-400 hover:text-gray-500">
-                                                            <span class="sr-only">Remove</span>
-                                                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg"
-                                                                viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
+                                                <div class="mt-4 flex items-center space-x-3">
+                                                    <div class="flex items-center border border-slate-200 rounded-md">
+                                                        <button type="submit" form="update-minus-{{ $item->id }}" @disabled($item->quantity <= 1) 
+                                                            class="p-1 px-2 hover:bg-slate-50 text-slate-500 @if($item->quantity <= 1) opacity-50 cursor-not-allowed @endif">
+                                                            -
                                                         </button>
-                                                    </form>
+                                                        
+                                                        <span class="px-3 text-sm font-medium text-slate-900">{{ $item->quantity }}</span>
+                                                        
+                                                        <button type="submit" form="update-plus-{{ $item->id }}" class="p-1 px-2 hover:bg-slate-50 text-slate-500">
+                                                            +
+                                                        </button>
+                                                    </div>
+
+                                                    <button type="submit" form="delete-form-{{ $item->id }}" 
+                                                        class="text-xs text-red-500 hover:text-red-700 font-medium">Remove</button>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </li>
-                            @endforeach
-                        </ul>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </form>
                     </section>
 
                     <!-- Order summary -->
                     <section aria-labelledby="summary-heading"
-                        class="mt-16 bg-slate-50 rounded-lg px-4 py-6 sm:p-6 lg:p-8 lg:mt-0 lg:col-span-5">
+                        class="mt-16 bg-slate-50 rounded-lg px-4 py-6 sm:p-6 lg:p-8 lg:mt-0 lg:col-span-5 border border-slate-100">
                         <h2 id="summary-heading" class="text-lg font-medium text-slate-900">Order summary</h2>
 
                         <dl class="mt-6 space-y-4">
                             <div class="flex items-center justify-between border-t border-gray-200 pt-4">
-                                <dt class="text-base font-medium text-slate-900">Order total</dt>
-                                <dd class="text-base font-medium text-slate-900">IDR
+                                <dt class="text-base font-medium text-slate-900">Selected total</dt>
+                                <dd class="text-base font-medium text-slate-900" id="cart-total">IDR
                                     {{ number_format($total, 0, ',', '.') }}</dd>
                             </div>
                         </dl>
 
                         <div class="mt-6">
-                            <a href="{{ route('checkout.index') }}"
-                                class="w-full bg-blue-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-blue-500 block text-center">Checkout</a>
+                            <button type="submit" form="checkout-form"
+                                class="w-full bg-blue-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-blue-500 transition-all active:scale-[0.98]">
+                                Proceed to Checkout
+                            </button>
                         </div>
                     </section>
-                </form>
+                </div>
+
+                <script>
+                    function toggleSelectAll(source) {
+                        checkboxes = document.getElementsByClassName('item-checkbox');
+                        for (var i = 0; i < checkboxes.length; i++) {
+                            checkboxes[i].checked = source.checked;
+                        }
+                        updateTotal();
+                    }
+
+                    function updateTotal() {
+                        let total = 0;
+                        const items = document.querySelectorAll('li.flex');
+                        items.forEach(item => {
+                            const checkbox = item.querySelector('.item-checkbox');
+                            if (checkbox.checked) {
+                                const priceText = item.querySelector('[data-price]').getAttribute('data-price');
+                                const qty = parseInt(item.querySelector('span.px-3').innerText);
+                                total += parseFloat(priceText) * qty;
+                            }
+                        });
+                        document.getElementById('cart-total').innerText = 'IDR ' + new Intl.NumberFormat('id-ID').format(total);
+                    }
+                </script>
             @endif
         </div>
     </div>

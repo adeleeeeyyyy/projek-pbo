@@ -50,17 +50,17 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-slate-500 truncate">Total Inventory Value</dt>
+                            <dt class="text-sm font-medium text-slate-500 truncate">Total Revenue</dt>
                             <dd class="text-3xl font-semibold text-slate-900">IDR
-                                {{ number_format($totalStock * 150000, 0, ',', '.') }}
-                            </dd> <!-- Apprx calc -->
+                                {{ number_format($totalRevenue, 0, ',', '.') }}
+                            </dd>
                         </dl>
                     </div>
                 </div>
             </div>
             <div class="bg-slate-50 px-5 py-3">
                 <div class="text-sm">
-                    <span class="text-slate-500">Estimated value</span>
+                    <span class="text-slate-500">From paid orders</span>
                 </div>
             </div>
         </div>
@@ -80,9 +80,9 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-slate-500 truncate">Total Sales</dt>
-                            <dd class="text-3xl font-semibold text-slate-900">IDR
-                                {{ number_format($totalSales, 0, ',', '.') }}
+                            <dt class="text-sm font-medium text-slate-500 truncate">Total Users</dt>
+                            <dd class="text-3xl font-semibold text-slate-900">
+                                {{ $totalUsers }}
                             </dd>
                         </dl>
                     </div>
@@ -90,7 +90,7 @@
             </div>
             <div class="bg-slate-50 px-5 py-3">
                 <div class="text-sm">
-                    <span class="text-slate-500">Lifetime revenue</span>
+                    <span class="text-slate-500">Registered users</span>
                 </div>
             </div>
         </div>

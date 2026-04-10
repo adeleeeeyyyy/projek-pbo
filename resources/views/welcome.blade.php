@@ -130,22 +130,24 @@
                 <div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                 @foreach ($products as $product)
                     <div class="group relative">
-                        <div
-                            class="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-w-7 xl:aspect-h-8">
-                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
-                                class="h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300">
-                        </div>
-                        <div class="mt-4 flex justify-between">
-                            <div>
-                                <h3 class="text-sm text-slate-700 font-medium">
-                                    {{ $product->name }}
-                                </h3>
-                                <p class="mt-1 text-sm text-slate-500">{{ $product->category }}</p>
+                        <a href="{{ route('products.show', $product->id) }}" class="block">
+                            <div
+                                class="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-w-7 xl:aspect-h-8">
+                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
+                                    class="h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300">
                             </div>
-                            <p class="text-sm font-medium text-slate-900">IDR
-                                {{ number_format($product->price, 0, ',', '.') }}
-                            </p>
-                        </div>
+                            <div class="mt-4 flex justify-between">
+                                <div>
+                                    <h3 class="text-sm text-slate-700 font-medium group-hover:text-blue-600 transition-colors">
+                                        {{ $product->name }}
+                                    </h3>
+                                    <p class="mt-1 text-sm text-slate-500">{{ $product->category }}</p>
+                                </div>
+                                <p class="text-sm font-medium text-slate-900">IDR
+                                    {{ number_format($product->price, 0, ',', '.') }}
+                                </p>
+                            </div>
+                        </a>
                         <div class="mt-4">
                             <form action="{{ route('cart.store') }}" method="POST">
                                 @csrf

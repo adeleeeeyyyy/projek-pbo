@@ -17,11 +17,20 @@ class OrderController extends Controller
         return view('orders.index', compact('orders'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $cartItems = Cart::where('user_id', Auth::id())->with('product')->get();
+        $selectedIds = $request->input('selected_items', []);
+        
+        $query = Cart::where('user_id', Auth::id())->with('product');
+        
+        if (!empty($selectedIds)) {
+            $query->whereIn('id', $selectedIds);
+        }
+        
+        $cartItems = $query->get();
+
         if ($cartItems->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+            return redirect()->route('cart.index')->with('error', 'Please select at least one item to checkout.');
         }
 
         $total = $cartItems->sum(function ($item) {
@@ -35,9 +44,16 @@ class OrderController extends Controller
     {
         $request->validate([
             'shipping_address' => 'required|string|min:10',
+            'payment_method' => 'required|in:cod,card',
+            'cart_item_ids' => 'required|array',
+            'cart_item_ids.*' => 'exists:carts,id'
         ]);
 
-        $cartItems = Cart::where('user_id', Auth::id())->with('product')->get();
+        $cartItems = Cart::where('user_id', Auth::id())
+            ->whereIn('id', $request->cart_item_ids)
+            ->with('product')
+            ->get();
+
         if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index');
         }
@@ -51,6 +67,7 @@ class OrderController extends Controller
                 'user_id' => Auth::id(),
                 'total_price' => $total,
                 'shipping_address' => $request->shipping_address,
+                'payment_method' => $request->payment_method,
                 'status' => 'pending'
             ]);
 
@@ -63,9 +80,10 @@ class OrderController extends Controller
                 ]);
             }
 
-            Cart::where('user_id', Auth::id())->delete();
+            // Only delete the items that were checked out
+            Cart::whereIn('id', $request->cart_item_ids)->delete();
         });
 
-        return redirect()->route('home')->with('success', 'Order placed successfully!');
+        return redirect()->route('orders.index')->with('success', 'Order placed successfully!');
     }
 }

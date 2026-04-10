@@ -20,6 +20,13 @@
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-slide-in {
+            animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
     </style>
 </head>
 
@@ -72,6 +79,38 @@
             </div>
         </div>
     </nav>
+    
+    <!-- Toast Notification -->
+    @if(session('success'))
+    <div id="toast" class="fixed top-20 right-4 z-[100] animate-slide-in">
+        <div class="glass border-l-4 border-blue-500 rounded-lg shadow-xl p-4 flex items-center space-x-3 min-w-[300px]">
+            <div class="bg-blue-100 rounded-full p-1">
+                <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm font-medium text-slate-900">{{ session('success') }}</p>
+            </div>
+            <button onclick="document.getElementById('toast').remove()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    <script>
+        setTimeout(() => {
+            const toast = document.getElementById('toast');
+            if(toast) {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.5s ease';
+                setTimeout(() => toast.remove(), 500);
+            }
+        }, 3000);
+    </script>
+    @endif
 
     <main class="pt-16 min-h-screen">
         {{ $slot }}

@@ -33,6 +33,10 @@
                                                     <dd class="sm:mt-1">IDR {{ number_format($order->total_price, 0, ',', '.') }}
                                                     </dd>
                                                 </div>
+                                                <div class="flex justify-between pt-6 sm:block sm:pt-0">
+                                                    <dt class="font-medium text-slate-900">Payment</dt>
+                                                    <dd class="sm:mt-1">{{ strtoupper($order->payment_method) }}</dd>
+                                                </div>
                                             </dl>
                                             <div class="flex items-center space-x-4 mt-6 sm:mt-0">
                                                 <div class="flex items-center">
